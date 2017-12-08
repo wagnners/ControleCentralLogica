@@ -49,7 +49,8 @@ public class ServerListener  implements Runnable {
             System.out.println("Aguardando mensagem!");
             while ((mensagem = new Mensagem((Short[]) input.readObject())) != null) {
                 System.out.println("Deu boa pra ler!");
-                server.send(mensagem, output);
+                System.out.println("recebido: " + mensagem);
+                server.receive(mensagem, output);
             }
         } catch (MensagemInvalida ex) {
             System.out.println("Inválido!");

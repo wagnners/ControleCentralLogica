@@ -22,7 +22,7 @@ public class Memoria {
     public void realiza(Mensagem mensagem) {
         Registrador registrador = registradores.get(mensagem.getTipoRegistrador());
 
-        int posicao = mensagem.getEndereco();
+        int posicao = mensagem.getEndereco() * registrador.getTipo().getTamanhoByte();
         int tamanho = mensagem.getTamanho() * registrador.getTipo().getTamanhoByte();
 
         switch (mensagem.getTipoComando()) {

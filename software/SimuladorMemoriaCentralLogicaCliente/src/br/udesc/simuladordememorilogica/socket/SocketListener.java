@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -72,8 +73,10 @@ public class SocketListener {
         public void run() {
             try {
                 Short[] dados;
-                while (!socket.isClosed() && (dados = (Short[]) input.readObject()) != null) {
-                    Mensagem msg = (Mensagem) new Mensagem(dados);
+                System.out.println("aguardando!");
+                while ((dados = (Short[]) input.readObject()) != null) {
+                    System.out.println("recebeu!" + Arrays.toString(dados));
+                    Mensagem msg = new Mensagem(dados);
                     listener.notifica(msg);
                 }
             } catch (IOException | ClassNotFoundException ex) {

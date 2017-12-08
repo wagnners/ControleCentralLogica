@@ -112,6 +112,9 @@ public class ControllerTela implements ClienteListener {
     @Override
     public void notifica(Mensagem mensagem) {
         System.out.println("recebeu mensagem: " + mensagem);
+        if (mensagem.getTipoComando() == Comando.LER) {
+            modelTabela.setDados(mensagem.getDadosAsArray(), mensagem.getTipoRegistrador().getTamanhoByte());
+        }
     }
 
     private void atualizaComponentes(boolean conectado) {

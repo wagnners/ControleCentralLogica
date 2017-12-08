@@ -56,9 +56,10 @@ public class Server  {
         return socket;
     }
 
-    public boolean connect(Mensagem message, ObjectOutputStream output) {
-        memoria.realiza(message);
-        send(message, output);
+    public boolean receive(Mensagem mensagem, ObjectOutputStream output) {
+        memoria.realiza(mensagem);
+        send(mensagem, output);
+        System.out.println("deolvido: " + mensagem);
         return true;
     }
 

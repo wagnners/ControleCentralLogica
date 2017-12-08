@@ -35,15 +35,19 @@ public class ByteUtils {
     }
 
     public static String toString(Short[] valor) {
-        String saida = null;
         if (valor.length == 1) {
-            saida = valor.toString();
+            if (valor[0] == null) {
+                return null;
+            }
+            return Short.toString(valor[0]);
         }
+
+        String saida = null;
         if (valor[0] == null) {
             if (valor[1] != null) {
                 saida = Character.toString((char) (int) valor[1]);
             }
-            if (valor[3] != null) {
+            if (valor.length > 2 && valor[3] != null) {
                 saida += Character.toString((char) (int) valor[3]);
             }
         } else {

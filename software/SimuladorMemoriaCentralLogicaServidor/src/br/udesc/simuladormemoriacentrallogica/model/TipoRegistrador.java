@@ -32,7 +32,7 @@ public enum TipoRegistrador {
     }
 
     public int getTamanhoByte(){
-        return (int) Math.ceil(tamanho/8);
+        return (int) Math.ceil(tamanho/8.0);
     }
 
     static TipoRegistrador getTipoRegistrador(Short valor) {

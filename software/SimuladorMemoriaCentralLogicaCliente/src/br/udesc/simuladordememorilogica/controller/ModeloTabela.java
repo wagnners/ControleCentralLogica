@@ -5,6 +5,7 @@
  */
 package br.udesc.simuladordememorilogica.controller;
 
+import br.udesc.simuladordememorilogica.model.ByteUtils;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
@@ -74,6 +75,26 @@ public class ModeloTabela  extends AbstractTableModel {
         }
 
         return valores;
+    }
+
+    public void setDados(Short[] valores, int tamanho) {
+        reset();
+        int k = 0;
+
+        for (int i = 0; i < getRowCount(); i++) {
+            for (int j = 0; j < getColumnCount(); j++) {
+                if (getColumnCount() * i + j < cells) {
+                    Short[] aux = new Short[tamanho];
+                    for (int m = 0; m < tamanho; m++) {
+                        aux[m] = valores[k++];
+                    }
+
+                    dados[i][j] = ByteUtils.toString(aux);
+                }
+            }
+        }
+
+        fireTableDataChanged();
     }
 
 }

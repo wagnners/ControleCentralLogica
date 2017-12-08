@@ -56,16 +56,17 @@ public class Mensagem {
         validaInicio(valor);
         validaFinal(valor);
 
-        tipoComando = Comando.getTipoComando(valor[1]);
-        tipoRegistrador = TipoRegistrador.getTipoRegistrador(valor[2]);
-        endereco = valor[3] | valor[4] << 8;
-        tamanho = valor[5] | valor[6] << 8;
-        int posicoes = tamanho * tipoRegistrador.getTamanhoByte();
-
-        if (tipoComando == Comando.ESCREVER) {
+        if (valor.length > 3) {
+            tipoComando = Comando.getTipoComando(valor[1]);
+            tipoRegistrador = TipoRegistrador.getTipoRegistrador(valor[2]);
+            endereco = valor[3] | valor[4] << 8;
+            tamanho = valor[5] | valor[6] << 8;
+            int posicoes = tamanho * tipoRegistrador.getTamanhoByte();
             Short[] conteudo = new Short[posicoes];
             System.arraycopy(valor, 7, conteudo, 0, posicoes);
             dados = new ArrayList<>(Arrays.asList(conteudo));
+        } else {
+            tipoComando = Comando.ESCREVER;
         }
     }
 
@@ -80,7 +81,7 @@ public class Mensagem {
         valor[5] = (short) (tamanho & FULL_BYTE);
         valor[6] = (short) ((tamanho >> 8) & FULL_BYTE);
 
-        if (tipoComando == Comando.ESCREVER) {
+        if (tipoComando != Comando.LER) {
             System.arraycopy(dados.toArray(), 0, valor, 7, dados.size());
         }
 
@@ -108,7 +109,11 @@ public class Mensagem {
     }
 
     public Short[] getDadosAsArray() {
-        return (Short[]) dados.toArray();
+        Short[] saida = new Short[dados.size()];
+        for (int i = 0; i < dados.size(); i++) {
+            saida[i] = dados.get(i);
+        }
+        return saida;
     }
 
     void setDados(Short[] valores) {
@@ -118,15 +123,18 @@ public class Mensagem {
     @Override
     public String toString() {
         StringBuilder saida = new StringBuilder();
-        saida.append(tipoComando.toString());
-        saida.append(" ");
-        saida.append(tipoRegistrador.toString());
-        saida.append(" ");
-        saida.append(endereco);
-        saida.append(" ");
-        saida.append(tamanho);
-        saida.append(" ");
-        saida.append(Arrays.toString(getDados().toArray()));
+
+        if (dados != null) {
+            saida.append(tipoComando.toString());
+            saida.append(" ");
+            saida.append(tipoRegistrador.toString());
+            saida.append(" ");
+            saida.append(endereco);
+            saida.append(" ");
+            saida.append(tamanho);
+            saida.append(" ");
+            saida.append(Arrays.toString(getDados().toArray()));
+        }
 
         return saida.toString();
     }

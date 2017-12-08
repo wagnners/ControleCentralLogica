@@ -31,6 +31,13 @@ public class Registrador {
     }
 
     public void grava(int indice, Short[] valor) {
+        if (tipo == TipoRegistrador.M) {
+            for (int i = 0; i < valor.length; i++) {
+                if (valor[i] != null) {
+                    valor[i] = (short) (((int) valor[i]) & 1);
+                }
+            }
+        }
         System.arraycopy(valor, 0, this.valor, indice, valor.length);
     }
 

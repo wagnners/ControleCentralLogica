@@ -102,7 +102,15 @@ public class Mensagem {
     }
 
     public Short[] getDadosAsArray() {
-        return (Short[]) dados.toArray();
+//        System.out.println(Arrays.toString(dados.toArray()));
+
+        Short[] saida = new Short[dados.size()];
+
+        for (int i = 0; i < dados.size(); i++) {
+            saida[i] = dados.get(i);
+        }
+
+        return saida;
     }
 
     void setDados(Short[] valores) {
@@ -119,8 +127,10 @@ public class Mensagem {
         saida.append(endereco);
         saida.append(" ");
         saida.append(tamanho);
-        saida.append(" ");
-        saida.append(Arrays.toString(getDados().toArray()));
+        if (dados != null) {
+            saida.append(" ");
+            saida.append(Arrays.toString(getDados().toArray()));
+        }
 
         return saida.toString();
     }
