@@ -5,7 +5,7 @@
  */
 package br.udesc.simuladormemoriacentrallogica.model;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -13,12 +13,13 @@ import java.util.ArrayList;
  */
 public class Registrador {
 
-    private TipoRegistrador tipo;
-    private ArrayList<Short> registradores;
+    private final TipoRegistrador tipo;
+
+    private final Short[] valor;
 
     public Registrador(TipoRegistrador tipo) {
         this.tipo = tipo;
-        registradores = new ArrayList<>();
+        valor = new Short[tipo.getRange()];
     }
 
     public TipoRegistrador getTipo() {
@@ -26,10 +27,18 @@ public class Registrador {
     }
 
     public void grava(int indice, Short valor) {
-        registradores.add(indice, valor);
+        this.valor[indice] = valor;
     }
 
-    public Short ler(int indice) {
-        return registradores.get(indice);
+    public void grava(int indice, Short[] valor) {
+        System.arraycopy(valor, 0, this.valor, indice, valor.length);
+    }
+
+    public Short le(int indice) {
+        return valor[indice];
+    }
+
+    public Short[] le(int indice, int tamanho) {
+        return Arrays.copyOfRange(valor, indice, tamanho + indice);
     }
 }

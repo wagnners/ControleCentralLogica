@@ -10,11 +10,13 @@ package br.udesc.simuladormemoriacentrallogica.model;
  * @author Wagner
  */
 public enum TipoRegistrador {
+
     M (1,5000),
     D (16, 8000),
     R (32, 30000);
-    private int tamanho;
-    private int range;
+
+    private final int tamanho;
+    private final int range;
 
     private TipoRegistrador(int tamanho, int range) {
         this.tamanho = tamanho;
@@ -27,10 +29,23 @@ public enum TipoRegistrador {
 
     public int getRange() {
         return range;
-    }   
-    
-    public int getTamanhoByte(){      
+    }
+
+    public int getTamanhoByte(){
         return (int) Math.ceil(tamanho/8);
     }
-    
+
+    static TipoRegistrador getTipoRegistrador(Short valor) {
+        switch (valor) {
+            case 0x4D:
+                return TipoRegistrador.M;
+            case 0x44:
+                return TipoRegistrador.D;
+            case 0x52:
+                return TipoRegistrador.R;
+        }
+
+        return null;
+    }
+
 }

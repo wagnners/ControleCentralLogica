@@ -5,16 +5,31 @@
  */
 package br.udesc.simuladormemoriacentrallogica.model;
 
+import java.util.HashMap;
+
 /**
  *
  * @author Wagner
  */
 public class Memoria {
-    
-    public void inserirM(){
+
+    HashMap<TipoRegistrador, Registrador> registradores = new HashMap<>();
+
+    public void add(Registrador r) {
+        registradores.put(r.getTipo(), r);
     }
-    public void inserirD(){       
-    }
-    public void inserirR(){       
+
+    public void realiza(Mensagem mensagem) {
+        Registrador registrador = registradores.get(mensagem.getTipoRegistrador());
+
+        int posicao = mensagem.getEndereco();
+        int tamanho = mensagem.getTamanho() * registrador.getTipo().getTamanhoByte();
+
+        switch (mensagem.getTipoComando()) {
+            case LER:
+                mensagem.setDados(registrador.le(posicao, tamanho));
+            case ESCREVER:
+                registrador.grava(posicao, mensagem.getDadosAsArray());
+        }
     }
 }

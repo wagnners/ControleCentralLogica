@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.udesc.simuladormemoriacentrallogica.model;
+package br.udesc.simuladordememorilogica.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +44,14 @@ public class Mensagem {
         return tamanho;
     }
 
+    public Mensagem(Comando tipoComando, TipoRegistrador tipoRegistrador, int endereco, int tamanho, ArrayList<Short> dados) {
+        this.tipoComando = tipoComando;
+        this.tipoRegistrador = tipoRegistrador;
+        this.endereco = endereco;
+        this.tamanho = tamanho;
+        this.dados = dados;
+    }
+
     public Mensagem(Short[] valor) throws MensagemInvalida {
         validaInicio(valor);
         validaFinal(valor);
@@ -65,17 +73,15 @@ public class Mensagem {
         Short[] valor = new Short[getTamanhoTotal()];
         valor[0] = START_BYTE;
         valor[valor.length - 1] = END_BYTE;
+        valor[1] = tipoComando.getValor();
+        valor[2] = (short) tipoRegistrador.toString().charAt(0);
+        valor[3] = (short) (endereco & FULL_BYTE);
+        valor[4] = (short) ((endereco >> 8) & FULL_BYTE);
+        valor[5] = (short) (tamanho & FULL_BYTE);
+        valor[6] = (short) ((tamanho >> 8) & FULL_BYTE);
 
-        if (tipoComando == Comando.LER) {
-            valor[1] = tipoComando.getValor();
-            valor[2] = (short) tipoRegistrador.toString().charAt(0);
-            valor[3] = (short) (endereco & FULL_BYTE);
-            valor[4] = (short) ((endereco >> 8) & FULL_BYTE);
-            valor[5] = (short) (tamanho & FULL_BYTE);
-            valor[6] = (short) ((tamanho >> 8) & FULL_BYTE);
+        if (tipoComando == Comando.ESCREVER) {
             System.arraycopy(dados.toArray(), 0, valor, 7, dados.size());
-        } else {
-            valor[1] = (short) 3; // OK
         }
 
         return valor;
@@ -83,8 +89,8 @@ public class Mensagem {
 
     public int getTamanhoTotal() {
         // start + operação + tipo + 2x endereço + 2x tamanho + end
-        if (tipoComando == Comando.ESCREVER) {
-            return 3;
+        if (tipoComando != Comando.ESCREVER) {
+            return 8;
         }
         return 8 + dados.size();
     }
