@@ -30,11 +30,11 @@ public class Registrador {
         this.valor[indice] = valor;
     }
 
-    public void grava(int indice, Short[] valor) {
+    public void grava(int indice, Short[] valor) throws ValorInvalido {
         if (tipo == TipoRegistrador.M) {
             for (int i = 0; i < valor.length; i++) {
-                if (valor[i] != null) {
-                    valor[i] = (short) (((int) valor[i]) & 1);
+                if (valor[i] != null && valor[i] > 1) {
+                    throw new ValorInvalido();
                 }
             }
         }

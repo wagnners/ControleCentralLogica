@@ -5,10 +5,13 @@
  */
 package br.udesc.simuladormemoriacentrallogica.server;
 
+import br.udesc.simuladormemoriacentrallogica.model.Comando;
 import br.udesc.simuladormemoriacentrallogica.model.Memoria;
 import br.udesc.simuladormemoriacentrallogica.model.Mensagem;
+import br.udesc.simuladormemoriacentrallogica.model.MensagemInvalida;
 import br.udesc.simuladormemoriacentrallogica.model.Registrador;
 import br.udesc.simuladormemoriacentrallogica.model.TipoRegistrador;
+import br.udesc.simuladormemoriacentrallogica.model.ValorInvalido;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -56,11 +59,23 @@ public class Server  {
         return socket;
     }
 
-    public boolean receive(Mensagem mensagem, ObjectOutputStream output) {
-        memoria.realiza(mensagem);
-        send(mensagem, output);
-        System.out.println("deolvido: " + mensagem);
-        return true;
+    public boolean receive(Short[] dados, ObjectOutputStream output) {
+        try {
+            Mensagem mensagem = new Mensagem(dados);
+            memoria.realiza(mensagem);
+            if (mensagem.getTipoComando() == Comando.ESCREVER) {
+                send((short) 10, output);
+            } else {
+                send(mensagem, output);
+            }
+
+            return true;
+        } catch (MensagemInvalida ex) {
+            send((short) 0x00, output);
+        } catch (ValorInvalido ex) {
+            send((short) 0x02, output);
+        }
+        return false;
     }
 
     public void send(Mensagem mensagem, ObjectOutputStream output) {
@@ -70,5 +85,28 @@ public class Server  {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public void send(short valor, ObjectOutputStream output) {
+        try {
+            Short[] msg = new Short[3];
+            msg[0] = 0x02;
+            msg[1] = valor;
+            msg[2] = 0x03;
+            System.out.println("devolvido: " + msg);
+
+            output.writeObject(msg);
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void desconecta() {
+        try {
+            socket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 
 }

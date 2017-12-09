@@ -24,7 +24,6 @@ public class ModeloTabela  extends AbstractTableModel {
 
     public void reset() {
         dados = new String[getRowCount()][getColumnCount()];
-        fireTableStructureChanged();
     }
 
     public void setCells(int cells) {
@@ -93,8 +92,6 @@ public class ModeloTabela  extends AbstractTableModel {
                 }
             }
         }
-
-        fireTableDataChanged();
     }
 
 }

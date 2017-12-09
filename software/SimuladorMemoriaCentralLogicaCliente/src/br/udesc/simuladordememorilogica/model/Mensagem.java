@@ -7,6 +7,7 @@ package br.udesc.simuladordememorilogica.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -67,6 +68,8 @@ public class Mensagem {
             dados = new ArrayList<>(Arrays.asList(conteudo));
         } else {
             tipoComando = Comando.ESCREVER;
+            dados = new ArrayList<>();
+            dados.add(valor[1]);
         }
     }
 
@@ -124,7 +127,7 @@ public class Mensagem {
     public String toString() {
         StringBuilder saida = new StringBuilder();
 
-        if (dados != null) {
+        if (tipoRegistrador != null) {
             saida.append(tipoComando.toString());
             saida.append(" ");
             saida.append(tipoRegistrador.toString());

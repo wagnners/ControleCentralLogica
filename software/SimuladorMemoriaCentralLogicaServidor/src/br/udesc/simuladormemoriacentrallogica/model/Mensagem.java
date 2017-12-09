@@ -75,7 +75,7 @@ public class Mensagem {
             valor[6] = (short) ((tamanho >> 8) & FULL_BYTE);
             System.arraycopy(dados.toArray(), 0, valor, 7, dados.size());
         } else {
-            valor[1] = (short) 3; // OK
+            valor[1] = (short) dados.get(0); // OK
         }
 
         return valor;

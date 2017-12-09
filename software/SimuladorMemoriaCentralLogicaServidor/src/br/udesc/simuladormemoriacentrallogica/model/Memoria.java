@@ -19,7 +19,7 @@ public class Memoria {
         registradores.put(r.getTipo(), r);
     }
 
-    public void realiza(Mensagem mensagem) {
+    public void realiza(Mensagem mensagem) throws ValorInvalido {
         Registrador registrador = registradores.get(mensagem.getTipoRegistrador());
 
         int posicao = mensagem.getEndereco() * registrador.getTipo().getTamanhoByte();

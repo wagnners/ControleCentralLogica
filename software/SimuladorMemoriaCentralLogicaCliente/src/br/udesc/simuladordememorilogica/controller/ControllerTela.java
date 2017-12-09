@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 /**
  *
@@ -46,10 +47,11 @@ public class ControllerTela implements ClienteListener {
         modelTabela = new ModeloTabela();
         tela.tabela.setModel(modelTabela);
         tela.tabela.setDefaultRenderer(Object.class, new RenderizadorTabela(modelTabela));
-        modelTabela.setCells((Integer) tela.edTamanho.getValue());
+        getModelTabela().setCells((Integer) tela.edTamanho.getValue());
 
         tela.edTamanho.addChangeListener((ChangeEvent e) -> {
-            modelTabela.setCells((Integer) tela.edTamanho.getValue());
+            getModelTabela().setCells((Integer) tela.edTamanho.getValue());
+            getModelTabela().fireTableDataChanged();
         });
 
         tela.btnConectar.addActionListener((ActionEvent e) -> {
@@ -87,11 +89,11 @@ public class ControllerTela implements ClienteListener {
         fechaConexao();
     }
 
-
-
     private void fechaConexao() {
-        listener.desconecta();
-        listener = null;
+        if (listener != null) {
+            listener.desconecta();
+            listener = null;
+        }
         atualizaComponentes(false);
     }
 
@@ -100,12 +102,11 @@ public class ControllerTela implements ClienteListener {
         TipoRegistrador registrador = TipoRegistrador.valueOf((String) tela.cbRegistrador.getSelectedItem());
         int endereco = (Integer) tela.edEndereco.getValue();
         int tamanho  = (Integer) tela.edTamanho.getValue();
-        ArrayList<String> dados = modelTabela.getDados();
+        ArrayList<String> dados = getModelTabela().getDados();
         StringToShortConverter converter = new StringToShortConverter(registrador);
 
         Mensagem mensagem = new Mensagem(comando, registrador, endereco, tamanho, converter.toShortList(dados));
         System.out.println("enviar: " + mensagem);
-        System.out.println("enviar: " + Arrays.toString(mensagem.monta()));
         listener.envia(mensagem);
     }
 
@@ -113,7 +114,25 @@ public class ControllerTela implements ClienteListener {
     public void notifica(Mensagem mensagem) {
         System.out.println("recebeu mensagem: " + mensagem);
         if (mensagem.getTipoComando() == Comando.LER) {
-            modelTabela.setDados(mensagem.getDadosAsArray(), mensagem.getTipoRegistrador().getTamanhoByte());
+            getModelTabela().setDados(mensagem.getDadosAsArray(), mensagem.getTipoRegistrador().getTamanhoByte());
+            getModelTabela().fireTableDataChanged();
+        } else {
+            String msg;
+            switch (mensagem.getDados().get(0)) {
+                case 0:
+                    msg = "Mensagem inválida";
+                    break;
+                case 1:
+                    msg = "Range inválido";
+                    break;
+                case 2:
+                    msg = "Valor inválido";
+                    break;
+                default:
+                    msg = "Sucesso!";
+            }
+
+            JOptionPane.showMessageDialog(tela, msg);
         }
     }
 
@@ -129,6 +148,12 @@ public class ControllerTela implements ClienteListener {
         tela.cbRegistrador.setEnabled(conectado);
         tela.btnExecutar.setEnabled(conectado);
     }
+
+    public synchronized ModeloTabela getModelTabela() {
+        return modelTabela;
+    }
+
+
 
 
 }

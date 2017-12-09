@@ -44,23 +44,18 @@ public class ServerListener  implements Runnable {
 
     @Override
     public void run() {
-        Mensagem mensagem = null;
+        Short[] dados = null;
         try {
             System.out.println("Aguardando mensagem!");
-            while ((mensagem = new Mensagem((Short[]) input.readObject())) != null) {
-                System.out.println("Deu boa pra ler!");
-                System.out.println("recebido: " + mensagem);
-                server.receive(mensagem, output);
+            while ((dados = (Short[]) input.readObject()) != null) {
+                System.out.println("leu!");
+                server.receive(dados, output);
             }
-        } catch (MensagemInvalida ex) {
-            System.out.println("Inválido!");
-//            mensagem.setSituacao();
-            server.send(mensagem, output);
         } catch (SocketException ex) {
             System.out.println(ex.getMessage());
         } catch (IOException | ClassNotFoundException ex) {
-            System.out.println("Deu ruim pra ler!");
-            Logger.getLogger(ServerListener.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("cliente desconectou!");
+//            Logger.getLogger(ServerListener.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
